@@ -1,0 +1,43 @@
+{
+  "name": "standup-service-ts",
+  "version": "1.0.0",
+  "description": "TypeScript implementation of the standup service",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "db:migrate": "npm run build && node dist/index.js db:migrate",
+    "db:seed": "npm run build && node dist/index.js db:seed",
+    "standup:send": "npm run build && node dist/index.js standup:send",
+    "team:create": "npm run build && node dist/index.js team:create",
+    "team:list": "npm run build && node dist/index.js team:list",
+    "team:update": "npm run build && node dist/index.js team:update",
+    "team:delete": "npm run build && node dist/index.js team:delete",
+    "team:add-user": "npm run build && node dist/index.js team:add-user",
+    "team:remove-user": "npm run build && node dist/index.js team:remove-user",
+    "test": "jest",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "standup",
+    "slack",
+    "automation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "dotenv": "^16.4.5",
+    "pg": "^8.16.3",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.27"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.15.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
