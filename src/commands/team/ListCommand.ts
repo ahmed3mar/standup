@@ -23,6 +23,8 @@ export class ListCommand {
         console.log(`[${team.id}] ${team.name}`);
         console.log(`  Channel: ${team.channelId || 'Not set'}`);
         console.log(`  Description: ${team.description || 'Not set'}`);
+        console.log(`  Schedule Time: ${team.scheduleTime || 'Not set'}`);
+        console.log(`  Excluded Days: ${team.excludedDays || 'Not set (default: 0,5 - Sunday, Friday)'}`);
         console.log(`  Owner: ${team.owner?.name || 'Not set'}`);
         console.log(`  Members: ${team.users?.length || 0}`);
         if (team.users && team.users.length > 0) {

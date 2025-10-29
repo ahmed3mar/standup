@@ -30,6 +30,12 @@ export class Team {
   @Column({ name: 'owner_user_id', nullable: true })
   ownerUserId?: number;
 
+  @Column({ name: 'schedule_time', nullable: true, length: 5 })
+  scheduleTime?: string;
+
+  @Column({ name: 'excluded_days', nullable: true, default: '0,5' })
+  excludedDays?: string;
+
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   createdAt: Date;
 

@@ -11,6 +11,8 @@ export class UpdateCommand {
       name?: string;
       channelId?: string;
       description?: string;
+      scheduleTime?: string;
+      excludedDays?: string;
     }
   ): Promise<void> {
     try {
@@ -23,6 +25,8 @@ export class UpdateCommand {
       if (options.name) updates.name = options.name;
       if (options.channelId) updates.channelId = options.channelId;
       if (options.description !== undefined) updates.description = options.description;
+      if (options.scheduleTime !== undefined) updates.scheduleTime = options.scheduleTime;
+      if (options.excludedDays !== undefined) updates.excludedDays = options.excludedDays;
 
       if (Object.keys(updates).length === 0) {
         console.log('No updates provided');
@@ -36,6 +40,8 @@ export class UpdateCommand {
       console.log(`  Name: ${team.name}`);
       console.log(`  Channel ID: ${team.channelId || 'Not set'}`);
       console.log(`  Description: ${team.description || 'Not set'}`);
+      console.log(`  Schedule Time: ${team.scheduleTime || 'Not set'}`);
+      console.log(`  Excluded Days: ${team.excludedDays || 'Not set'}`);
 
       await AppDataSource.destroy();
     } catch (error) {

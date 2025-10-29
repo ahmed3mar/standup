@@ -47,6 +47,8 @@ export class TeamSeeder implements Seeder {
       name: 'Engineering Team',
       description: 'Core engineering team',
       channelId: process.env.SLACK_CHANNEL_ID || 'C1234567890',
+      scheduleTime: '09:00',
+      excludedDays: '0,5', // Sunday and Friday
       owner: admin,
       users: [user1, user2, user3],
     });
@@ -57,6 +59,8 @@ export class TeamSeeder implements Seeder {
       name: 'Product Team',
       description: 'Product management team',
       channelId: 'C0987654321',
+      scheduleTime: '10:00',
+      excludedDays: '0,6', // Sunday and Saturday
       owner: admin,
       users: [user2, user3],
     });

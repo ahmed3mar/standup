@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import { MigrateCommand } from './commands/db/MigrateCommand';
 import { SeedCommand } from './commands/db/SeedCommand';
 import { SendCommand } from './commands/standup/SendCommand';
+import { SchedulerCommand } from './commands/standup/SchedulerCommand';
 import {
   CreateCommand,
   ListCommand,
@@ -45,6 +46,10 @@ async function main() {
         await new SendCommand().execute(teamId);
         break;
 
+      case 'standup:scheduler':
+        await new SchedulerCommand().execute();
+        break;
+
       case 'team:create':
         if (!args[1] || !args[2]) {
           console.error('Usage: team:create <name> <channel_id> [description]');
@@ -59,7 +64,7 @@ async function main() {
 
       case 'team:update':
         if (!args[1]) {
-          console.error('Usage: team:update <team_id> [--name=<name>] [--channel=<id>] [--description=<desc>]');
+          console.error('Usage: team:update <team_id> [--name=<name>] [--channel=<id>] [--description=<desc>] [--schedule=<HH:MM>] [--excluded-days=<0,5>]');
           process.exit(1);
         }
         const updateTeamId = parseInt(args[1], 10);
@@ -116,6 +121,8 @@ function parseUpdateOptions(args: string[]): {
   name?: string;
   channelId?: string;
   description?: string;
+  scheduleTime?: string;
+  excludedDays?: string;
 } {
   const options: any = {};
 
@@ -126,6 +133,10 @@ function parseUpdateOptions(args: string[]): {
       options.channelId = arg.substring(10);
     } else if (arg.startsWith('--description=')) {
       options.description = arg.substring(14);
+    } else if (arg.startsWith('--schedule=')) {
+      options.scheduleTime = arg.substring(11);
+    } else if (arg.startsWith('--excluded-days=')) {
+      options.excludedDays = arg.substring(16);
     }
   }
 
@@ -143,12 +154,14 @@ function printUsage() {
   console.log('  db:migrate                          Run database migrations');
   console.log('  db:seed                             Seed database with sample data\n');
   console.log('Standup Commands:');
-  console.log('  standup:send [team_id]              Send standup to all teams or specific team\n');
+  console.log('  standup:send [team_id]              Send standup to all teams or specific team');
+  console.log('  standup:scheduler                   Start automated cron scheduler for daily standups\n');
   console.log('Team Management Commands:');
   console.log('  team:create <name> <channel_id> [desc]  Create a new team');
   console.log('  team:list                               List all teams');
   console.log('  team:update <id> [options]              Update team details');
   console.log('    Options: --name=<name> --channel=<id> --description=<desc>');
+  console.log('             --schedule=<HH:MM> --excluded-days=<0,5>');
   console.log('  team:delete <id>                        Delete a team');
   console.log('  team:add-user <team_id> <user_name> [--create]  Add user to team');
   console.log('  team:remove-user <team_id> <user_id>    Remove user from team\n');
@@ -172,7 +185,8 @@ function printUsage() {
   console.log('  npm run team:list');
   console.log('  npm run team:add-user 1 "John Doe" --create');
   console.log('  npm run standup:send');
-  console.log('  npm run standup:send 1\n');
+  console.log('  npm run standup:send 1');
+  console.log('  npm run standup:scheduler\n');
 }
 
 // Run the CLI
