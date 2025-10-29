@@ -133,11 +133,35 @@ node dist/index.js help
 
 ## Commands
 
-- `send` - Send daily standup message to the configured channel
-- `migrate` - Initialize or update the database schema
+### Database Commands
+- `db:migrate` - Run database migrations
+- `db:seed` - Seed database with sample data
+
+### Standup Commands
+- `standup:send [team_id]` - Send standup to all teams or specific team
+- `standup:scheduler` - Start automated cron scheduler for daily standups
+
+### Team Management Commands
+- `team:create <name> <channel_id> [description]` - Create a new team
+- `team:list` - List all teams with their configurations
+- `team:update <id> [options]` - Update team details including schedule
+  - Options: `--name=<name>`, `--channel=<id>`, `--description=<desc>`, `--schedule=<HH:MM>`, `--excluded-days=<0,5>`
+- `team:delete <id>` - Delete a team
+- `team:add-user <team_id> <user_name> [--create]` - Add user to team
+- `team:remove-user <team_id> <user_id>` - Remove user from team
+
+### Other Commands
 - `help` - Show help message
+- `test` - Run unit tests
 
 ## How It Works
+
+### Scheduler Command
+1. **Initialization**: Loads all teams with their schedule configurations
+2. **Cron Job Setup**: Creates a cron job for each team based on their schedule time and excluded days
+3. **Execution**: Runs continuously, sending standups at configured times
+4. **Duplicate Prevention**: Uses existing duplicate check to prevent multiple sends per day
+5. **Graceful Shutdown**: Stops all cron jobs on SIGINT/SIGTERM signals
 
 ### Migration Command
 1. **Configuration Loading**: Loads database path from `.env` file or environment variables
@@ -205,14 +229,71 @@ CREATE TABLE standups (
 );
 ```
 
-## Automation
+## Automated Scheduling
 
-You can automate the standup service using cron jobs:
+The service supports automated cron-based scheduling with configurable times and excluded days for each team.
+
+### Using the Built-in Scheduler
+
+Start the scheduler daemon to automatically send standups based on each team's configuration:
+
+```bash
+npm run standup:scheduler
+```
+
+The scheduler will:
+- Run continuously as a daemon
+- Send standups at each team's configured time
+- Skip excluded days (default: Sunday and Friday)
+- Prevent duplicate messages on the same day
+- Gracefully shutdown with Ctrl+C
+
+### Configuring Team Schedules
+
+Each team can have its own schedule configuration:
+
+```bash
+# Set schedule time (HH:MM format, 24-hour)
+npm run team:update 1 -- --schedule=09:00
+
+# Set excluded days (0=Sunday, 1=Monday, ..., 6=Saturday)
+npm run team:update 1 -- --excluded-days=0,5  # Excludes Sunday and Friday
+
+# Update both schedule and excluded days
+npm run team:update 1 -- --schedule=10:00 --excluded-days=0,6  # Weekdays only
+```
+
+**Default Configuration:**
+- Schedule Time: Not set (team won't be scheduled)
+- Excluded Days: `0,5` (Sunday and Friday)
+
+### Manual Cron Jobs (Alternative)
+
+You can also use traditional cron jobs:
 
 ```bash
 # Add to crontab (runs Monday-Friday at 9 AM)
-0 9 * * 1-5 cd /path/to/standup/ts && pnpm run send
+0 9 * * 1-5 cd /path/to/standup && npm run standup:send
 ```
+
+## Testing
+
+The project includes comprehensive unit tests for all scheduling functionality:
+
+```bash
+# Run tests
+npm test
+
+# Run tests with coverage
+npm test -- --coverage
+```
+
+**Test Coverage:**
+- 42 comprehensive test cases
+- Scheduler service (cron job management)
+- Duplicate prevention
+- Day exclusion logic
+- Error handling
 
 ## License
 
