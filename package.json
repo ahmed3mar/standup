@@ -10,6 +10,7 @@
     "db:migrate": "npm run build && node dist/index.js db:migrate",
     "db:seed": "npm run build && node dist/index.js db:seed",
     "standup:send": "npm run build && node dist/index.js standup:send",
+    "standup:scheduler": "npm run build && node dist/index.js standup:scheduler",
     "team:create": "npm run build && node dist/index.js team:create",
     "team:list": "npm run build && node dist/index.js team:list",
     "team:update": "npm run build && node dist/index.js team:update",
@@ -29,6 +30,7 @@
   "dependencies": {
     "better-sqlite3": "^11.0.0",
     "dotenv": "^16.4.5",
+    "node-cron": "^4.2.1",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.27"
@@ -36,6 +38,7 @@
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.11",
     "@types/node": "^22.0.0",
+    "@types/node-cron": "^3.0.11",
     "@types/pg": "^8.15.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
